@@ -35,3 +35,23 @@ export interface AbsenceTypeResponse {
   description: string | null;
   active: boolean;
 }
+
+export interface AbsenceApproverUser {
+  id: string;
+  username: string;
+  name: string;
+  email: string;
+  position: string | null;
+  sede: string | null;
+}
+
+export interface AbsenceApproverAssignment {
+  id: number;
+  employeeId: string;
+  employeeName: string;
+  employeeEmail: string;
+  approverId: string;
+  approverName: string;
+  approverEmail: string;
+  active: boolean;
+}

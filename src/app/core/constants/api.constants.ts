@@ -16,5 +16,6 @@ export const API_ENDPOINTS = {
   requirements: `${API_BASE_URL}/api/requirements`,
   reservations: `${API_BASE_URL}/api/reservations`,
   absences: `${API_BASE_URL}/api/absences`,
-  absenceTypes: `${API_BASE_URL}/api/absence-types`
+  absenceTypes: `${API_BASE_URL}/api/absence-types`,
+  absenceApproverAssignments: `${API_BASE_URL}/api/absence-approver-assignments`
 };

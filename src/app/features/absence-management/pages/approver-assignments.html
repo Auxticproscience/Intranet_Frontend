@@ -1,0 +1,71 @@
+<section class="absence-page">
+  <header>
+    <h1>Asignación de jefes inmediatos</h1>
+    <p>Configura quién revisa las solicitudes de cada empleado antes de Talento Humano.</p>
+  </header>
+  @if (error) { <p class="notice error" role="alert">{{ error }}</p> }
+  @if (success) { <p class="notice success" role="status">{{ success }}</p> }
+  @if (loading) { <p role="status">Cargando empleados y asignaciones...</p> }
+  @if (!loaded && !loading) {
+    <button type="button" (click)="load()">Reintentar</button>
+  }
+  @if (loaded) {
+    <section class="panel">
+      <h2>Asignar o cambiar jefe</h2>
+      <form [formGroup]="form" (ngSubmit)="save()">
+        <div class="form-grid">
+          <label>Empleado *
+            <select formControlName="employeeId" (change)="selectEmployee()">
+              <option value="">Selecciona un empleado</option>
+              @for (user of users; track user.id) {
+                <option [value]="user.id">{{ user.name }} — {{ user.email }}</option>
+              }
+            </select>
+          </label>
+          <label>Jefe inmediato *
+            <select formControlName="approverId">
+              <option value="">Selecciona un jefe</option>
+              @for (user of approvers; track user.id) {
+                <option [value]="user.id">{{ user.name }} — {{ user.email }}</option>
+              }
+            </select>
+          </label>
+        </div>
+        @if (form.invalid && form.touched) { <p role="alert">Selecciona el empleado y su jefe inmediato.</p> }
+        <p>Guardar reemplaza el jefe anterior y activa la asignación.</p>
+        <button type="submit" [disabled]="saving || users.length < 2">{{ saving ? 'Guardando...' : 'Guardar asignación' }}</button>
+      </form>
+    </section>
+    <div class="filters">
+      <label>Buscar empleado
+        <input type="search" [(ngModel)]="search" placeholder="Nombre, correo, sede o cargo">
+      </label>
+      <button type="button" class="secondary" (click)="load()" [disabled]="saving">Actualizar</button>
+    </div>
+    <div class="table-scroll" tabindex="0" aria-label="Empleados y jefes inmediatos">
+      <table>
+        <caption>Empleados activos y su asignación de jefe inmediato</caption>
+        <thead><tr><th>Empleado</th><th>Sede / Cargo</th><th>Jefe inmediato</th><th>Estado</th><th>Acciones</th></tr></thead>
+        <tbody>
+          @for (user of filteredUsers; track user.id) {
+            @let assignment = assignmentFor(user.id);
+            <tr>
+              <td>{{ user.name }}<small>{{ user.email }}</small></td>
+              <td>{{ user.sede || '—' }}<small>{{ user.position || '—' }}</small></td>
+              <td>{{ assignment?.approverName || 'Sin jefe asignado' }}<small>{{ assignment?.approverEmail }}</small></td>
+              <td>{{ assignment ? (assignment.active ? 'Activa' : 'Inactiva') : 'Sin asignación' }}</td>
+              <td><div class="actions">
+                <button type="button" (click)="selectEmployee(user.id)" [disabled]="saving"
+                  [attr.aria-label]="'Asignar jefe a ' + user.name">{{ assignment ? 'Cambiar / activar' : 'Asignar' }}</button>
+                @if (assignment?.active) {
+                  <button type="button" class="secondary" (click)="deactivate(assignment!)" [disabled]="saving"
+                    [attr.aria-label]="'Desactivar asignación de ' + user.name">Desactivar</button>
+                }
+              </div></td>
+            </tr>
+          } @empty { <tr><td colspan="5" class="empty">No hay empleados que coincidan con la búsqueda.</td></tr> }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

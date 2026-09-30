@@ -4,6 +4,8 @@ import { HttpClient } from '@angular/common/http';
 import { API_ENDPOINTS } from '../../../core/constants/api.constants';
 
 import {
+  AbsenceApproverUser,
+  AbsenceApproverAssignment,
   AbsenceCreateRequest,
   AbsenceResponse,
   AbsenceTypeResponse,
@@ -25,6 +27,27 @@ export class AbsenceApiService {
 
   private readonly typesUrl =
     API_ENDPOINTS.absenceTypes;
+
+  getApproverUsers() {
+    return this.http.get<AbsenceApproverUser[]>(`${API_ENDPOINTS.absenceApproverAssignments}/users`);
+  }
+
+  getApproverAssignments() {
+    return this.http.get<AbsenceApproverAssignment[]>(API_ENDPOINTS.absenceApproverAssignments);
+  }
+
+  assignApprover(employeeId: string, approverId: string) {
+    return this.http.put<AbsenceApproverAssignment>(
+      `${API_ENDPOINTS.absenceApproverAssignments}/${encodeURIComponent(employeeId)}`,
+      { approverId },
+    );
+  }
+
+  deactivateApproverAssignment(employeeId: string) {
+    return this.http.put<AbsenceApproverAssignment>(
+      `${API_ENDPOINTS.absenceApproverAssignments}/${encodeURIComponent(employeeId)}/deactivate`, {},
+    );
+  }
 
   getMyRequests() {
     return this.http.get<AbsenceResponse[]>(

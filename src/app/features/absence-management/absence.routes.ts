@@ -30,6 +30,11 @@ export const ABSENCE_ROUTES: Routes = [
         .then((m) => m.ApprovalsComponent),
   },
   {
+    path: 'approver-assignments',
+    canActivate: [absenceTypesGuard],
+    loadComponent: () => import('./pages/approver-assignments').then((m) => m.ApproverAssignmentsComponent),
+  },
+  {
     path: 'types',
     canActivate: [absenceTypesGuard],
     loadComponent: () =>
