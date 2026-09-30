@@ -1,27 +1,24 @@
-# Stage 1: Build
+# Stage 1: Build Angular
 FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Copy dependency manifests first to cache the installation layer.
 COPY package.json package-lock.json ./
+
 RUN npm ci
 
-# Copy the project and run its configured production build.
 COPY . .
-RUN npm run build
 
-# Stage 2: Runtime
-FROM node:20-alpine AS runner
+RUN npm run build -- --configuration production
 
-WORKDIR /app
 
-# Copy build artifacts and install production dependencies.
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json /app/package-lock.json ./
-RUN npm ci --omit=dev
+# Stage 2: Nginx runtime
+FROM nginx:alpine
 
-EXPOSE 4000
+COPY --from=builder /app/dist/intranet-frontend/browser /usr/share/nginx/html
 
-# Start Angular's SSR server. See README for the existing build/runtime mismatch.
-CMD ["node", "dist/intranet-frontend/server/server.mjs"]
+COPY nginx.conf /etc/nginx/conf.d/default.conf
+
+EXPOSE 80
+
+CMD ["nginx", "-g", "daemon off;"]
