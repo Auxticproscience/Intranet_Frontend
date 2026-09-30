@@ -1,102 +1,285 @@
 <section class="absence-page">
+
   <header>
-    <p class="eyebrow">Gestión de ausencias</p>
-    <h1>Nueva solicitud</h1>
-    <p>Registre su ausencia para revisión por el aprobador configurado.</p>
-  </header>
-  @if (success) {
-    <p class="notice success" role="status">{{ success }}</p>
-  }
-  @if (error) {
-    <p class="notice error" role="alert">{{ error }}</p>
-  }
-  <form class="panel" [formGroup]="form" (ngSubmit)="submit()">
-    @if (profileState$ | async; as profile) {
-      @if (profile.loading) {
-        <p role="status">Cargando datos del empleado…</p>
-      }
-      @if (profile.error) {
-        <p role="alert" class="notice error">{{ profile.error }}</p>
-        <button type="button" class="secondary" (click)="service.reloadProfile()">
-          Reintentar datos del empleado
-        </button>
-      }
-      @if (profile.data; as employee) {
-        <div class="form-grid">
-          <label
-            >Empleado<input [value]="employee.firstName + ' ' + employee.lastName" readonly
-          /></label>
-          <label
-            >Centro de operación actual<input [value]="employee.sede || 'No disponible'" readonly
-          /></label>
-        </div>
-      }
-    }
-    <div class="form-grid">
-      <label
-        >Fecha de solicitud<input [value]="requestDate" readonly /><small
-          >La fecha definitiva la asigna el servidor.</small
-        ></label
-      >
-      <label>Aprobador<input value="Asignado por el sistema al guardar" readonly /></label>
-      <label
-        >Tipo de ausencia *<input
-          formControlName="type"
-          required
-          maxlength="100"
-          placeholder="Ej.: Permiso personal"
-      /></label>
-    </div>
-    <label class="checkbox-label"
-      ><input type="checkbox" formControlName="allDay" /> Días completos</label
-    >
-    <h2>Periodo de ausencia</h2>
-    <p>
-      Las fechas, el tipo y el motivo son obligatorios. Para días completos, ambas fechas se
-      incluyen. Use la hora local del centro de operación.
+    <p class="eyebrow">
+      Gestión de ausencias
     </p>
+
+    <h1>
+      Nueva solicitud
+    </h1>
+
+    <p>
+      Registre su ausencia para revisión por el aprobador configurado.
+    </p>
+  </header>
+
+
+  @if (success) {
+
+    <p
+      class="notice success"
+      role="status">
+
+      {{ success }}
+
+    </p>
+
+  }
+
+
+  @if (error) {
+
+    <p
+      class="notice error"
+      role="alert">
+
+      {{ error }}
+
+    </p>
+
+  }
+
+
+  <form
+    class="panel"
+    [formGroup]="form"
+    (ngSubmit)="submit()">
+
+
+    @if (profileState$ | async; as profile) {
+
+      @if (profile.loading) {
+
+        <p role="status">
+          Cargando datos del empleado…
+        </p>
+
+      }
+
+
+      @if (profile.error) {
+
+        <p
+          role="alert"
+          class="notice error">
+
+          {{ profile.error }}
+
+        </p>
+
+        <button
+          type="button"
+          class="secondary"
+          (click)="service.reloadProfile()">
+
+          Reintentar datos del empleado
+
+        </button>
+
+      }
+
+
+      @if (profile.data; as employee) {
+
+        <div class="form-grid">
+
+          <label>
+            Empleado
+
+            <input
+              [value]="employee.firstName + ' ' + employee.lastName"
+              readonly
+            />
+          </label>
+
+
+          <label>
+            Centro de operación actual
+
+            <input
+              [value]="employee.sede || 'No disponible'"
+              readonly
+            />
+          </label>
+
+        </div>
+
+      }
+
+    }
+
+
     <div class="form-grid">
-      <label>Fecha de salida *<input type="date" formControlName="departureDate" required /></label>
-      @if (!form.controls.allDay.value) {
-        <label
-          >Hora de salida *<input
-            type="time"
-            step="60"
-            formControlName="departureTime"
-            aria-required="true"
-        /></label>
-      }
-      <label>Fecha de regreso *<input type="date" formControlName="returnDate" required /></label>
-      @if (!form.controls.allDay.value) {
-        <label
-          >Hora de regreso *<input
-            type="time"
-            step="60"
-            formControlName="returnTime"
-            aria-required="true"
-        /></label>
-      }
+
+      <label>
+        Fecha de solicitud
+
+        <input
+          [value]="requestDate"
+          readonly
+        />
+
+        <small>
+          La fecha definitiva la asigna el servidor.
+        </small>
+      </label>
+
+
+      <label>
+        Aprobador
+
+        <input
+          value="Asignado por el sistema al guardar"
+          readonly
+        />
+      </label>
+
+
+      <label>
+        Tipo de ausencia *
+
+        <select
+          formControlName="type"
+          required>
+
+          <option value="">
+            Seleccione...
+          </option>
+
+          @if (absenceTypes$ | async; as types) {
+            @for (type of types; track type.id) {
+              <option [value]="type.name">
+                {{ type.name }}
+              </option>
+            }
+          }
+
+        </select>
+      </label>
+
     </div>
-    <label
-      >Motivo *<textarea
+
+
+    <h2>
+      Periodo de ausencia
+    </h2>
+
+    <p>
+      La fecha y hora de salida, la fecha y hora de regreso,
+      el tipo y el motivo son obligatorios.
+      La fecha y hora de regreso deben ser posteriores
+      a la salida.
+    </p>
+
+
+    <div class="form-grid">
+
+      <label>
+        Fecha de salida *
+
+        <input
+          type="date"
+          formControlName="departureDate"
+          required
+        />
+      </label>
+
+
+      <label>
+        Hora de salida *
+
+        <input
+          type="time"
+          step="60"
+          formControlName="departureTime"
+          required
+          aria-required="true"
+        />
+      </label>
+
+
+      <label>
+        Fecha de regreso *
+
+        <input
+          type="date"
+          formControlName="returnDate"
+          required
+        />
+      </label>
+
+
+      <label>
+        Hora de regreso *
+
+        <input
+          type="time"
+          step="60"
+          formControlName="returnTime"
+          required
+          aria-required="true"
+        />
+      </label>
+
+    </div>
+
+
+    <label>
+      Motivo *
+
+      <textarea
         rows="4"
         maxlength="2000"
         formControlName="reason"
         required
-        placeholder="Describa el motivo de la ausencia"
-      ></textarea
-      ><small>Máximo 2000 caracteres.</small></label
-    >
-    @if (form.touched && form.invalid) {
-      <p class="notice error" role="alert">
-        Complete todos los campos obligatorios. El regreso debe ser posterior a la salida y las
-        fechas deben ser válidas.
+        placeholder="Describa el motivo de la ausencia">
+      </textarea>
+
+      <small>
+        Máximo 2000 caracteres.
+      </small>
+    </label>
+
+
+    @if (
+      form.touched &&
+      form.invalid
+    ) {
+
+      <p
+        class="notice error"
+        role="alert">
+
+        Complete todos los campos obligatorios.
+        La hora de salida y la hora de regreso son obligatorias,
+        y el regreso debe ser posterior a la salida.
+
       </p>
+
     }
+
+
     <div class="actions">
-      <button type="submit" [disabled]="saving">
-        {{ saving ? 'Guardando…' : 'Enviar solicitud' }}</button
-      ><span>Se enviará con estado Pendiente.</span>
+
+      <button
+        type="submit"
+        [disabled]="saving">
+
+        {{
+          saving
+            ? 'Guardando…'
+            : 'Enviar solicitud'
+        }}
+
+      </button>
+
+      <span>
+        Se enviará con estado Pendiente.
+      </span>
+
     </div>
+
   </form>
+
 </section>

@@ -1,0 +1,199 @@
+<section class="absence-page">
+
+  <header>
+    <h1>Tipos de ausencia</h1>
+
+    <p>
+      Administra las opciones disponibles para
+      las nuevas solicitudes de ausentismo.
+    </p>
+  </header>
+
+
+  @if (error) {
+    <div class="error-message">
+      {{ error }}
+    </div>
+  }
+
+
+  @if (success) {
+    <div class="success-message">
+      {{ success }}
+    </div>
+  }
+
+
+  <section class="absence-card">
+
+    <h2>
+      {{
+        editingId === null
+          ? 'Nuevo tipo de ausencia'
+          : 'Editar tipo de ausencia'
+      }}
+    </h2>
+
+
+    <form
+      [formGroup]="form"
+      (ngSubmit)="save()">
+
+      <label>
+
+        Nombre *
+
+        <input
+          type="text"
+          formControlName="name"
+          maxlength="100"
+          placeholder="Ej.: Ausencia personal">
+
+      </label>
+
+
+      <label>
+
+        Descripción
+
+        <textarea
+          formControlName="description"
+          maxlength="500"
+          rows="3"
+          placeholder="Descripción opcional">
+        </textarea>
+
+      </label>
+
+
+      <div>
+
+        <button
+          type="submit"
+          [disabled]="saving">
+
+          {{
+            saving
+              ? 'Guardando...'
+              : editingId === null
+                ? 'Crear tipo'
+                : 'Guardar cambios'
+          }}
+
+        </button>
+
+
+        @if (editingId !== null) {
+
+          <button
+            type="button"
+            (click)="cancelEdit()"
+            [disabled]="saving">
+
+            Cancelar
+
+          </button>
+
+        }
+
+      </div>
+
+    </form>
+
+  </section>
+
+
+  <section class="absence-card">
+
+    <h2>Tipos registrados</h2>
+
+
+    @if (loading) {
+
+      <p>
+        Cargando tipos de ausencia...
+      </p>
+
+    } @else if (types.length === 0) {
+
+      <p>
+        No hay tipos de ausencia registrados.
+      </p>
+
+    } @else {
+
+      <div class="table-responsive">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (type of types; track type.id) {
+
+              <tr>
+
+                <td>
+                  {{ type.name }}
+                </td>
+
+                <td>
+                  {{ type.description || '—' }}
+                </td>
+
+                <td>
+                  {{
+                    type.active
+                      ? 'Activo'
+                      : 'Inactivo'
+                  }}
+                </td>
+
+                <td>
+
+                  <button
+                    type="button"
+                    (click)="edit(type)">
+
+                    Editar
+
+                  </button>
+
+
+                  <button
+                    type="button"
+                    (click)="toggle(type)">
+
+                    {{
+                      type.active
+                        ? 'Desactivar'
+                        : 'Activar'
+                    }}
+
+                  </button>
+
+                </td>
+
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    }
+
+  </section>
+
+</section>

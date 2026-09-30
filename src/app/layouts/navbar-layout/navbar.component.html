@@ -1,65 +1,297 @@
 <header class="navbar-header">
+
   <div class="logo-container">
-    <button class="menu-toggle" (click)="toggleMenu($event)" type="button">
+
+    <button
+      class="menu-toggle"
+      (click)="toggleMenu($event)"
+      type="button">
+
       <mat-icon>menu</mat-icon>
+
     </button>
-    <img src="/assets/images/MoleculaYLetra.png" alt="Logo" class="logo"/>
+
+    <img
+      src="/assets/images/MoleculaYLetra.png"
+      alt="Logo"
+      class="logo"/>
+
   </div>
 
-  <div class="user-container" 
-       [matMenuTriggerFor]="userMenu"
-       (click)="onUserMenuClick($event)">
+
+  <div
+    class="user-container"
+    [matMenuTriggerFor]="userMenu"
+    (click)="onUserMenuClick($event)">
+
     <mat-icon>account_circle</mat-icon>
-    <span class="user-name">{{ user?.firstName }} {{ user?.lastName }}</span>
-    <mat-icon>expand_more</mat-icon>
+
+    <span class="user-name">
+      {{ user?.firstName }}
+      {{ user?.lastName }}
+    </span>
+
+    <mat-icon>
+      expand_more
+    </mat-icon>
+
   </div>
 
-  <mat-menu #userMenu="matMenu" xPosition="before">
-    <button mat-menu-item disabled>
-      <mat-icon>person</mat-icon>
+
+  <mat-menu
+    #userMenu="matMenu"
+    xPosition="before">
+
+    <button
+      mat-menu-item
+      disabled>
+
+      <mat-icon>
+        person
+      </mat-icon>
+
       {{ user?.email }}
+
     </button>
-    <button mat-menu-item disabled>
-      <mat-icon>work</mat-icon>
-      {{ user?.position }} | {{ user?.sede }}
+
+
+    <button
+      mat-menu-item
+      disabled>
+
+      <mat-icon>
+        work
+      </mat-icon>
+
+      {{ user?.position }}
+      |
+      {{ user?.sede }}
+
     </button>
-    <button mat-menu-item disabled>
-      <mat-icon>alarm</mat-icon>
+
+
+    <button
+      mat-menu-item
+      disabled>
+
+      <mat-icon>
+        alarm
+      </mat-icon>
+
       {{ user?.loginTime | date:'shortTime' }}
+
     </button>
-    <button mat-menu-item (click)="logout()">
-      <mat-icon>logout</mat-icon>
+
+
+    <button
+      mat-menu-item
+      (click)="logout()">
+
+      <mat-icon>
+        logout
+      </mat-icon>
+
       Cerrar sesión
+
     </button>
+
   </mat-menu>
+
 </header>
 
 
 @if (isMenuOpen) {
-  <div class="menu-overlay" (click)="closeMenu($event)"></div>
+
+  <div
+    class="menu-overlay"
+    (click)="closeMenu($event)">
+  </div>
+
 }
 
+
 <nav class="side-menu">
-  <a routerLink="/home" routerLinkActive="active" (click)="closeMenu()">Inicio</a>
-  <a routerLink="/documents" routerLinkActive="active" (click)="closeMenu()">Documentos</a>
-  <a routerLink="/requeriments" routerLinkActive="active" (click)="closeMenu()">Requerimientos</a>
+
+  <a
+    routerLink="/home"
+    routerLinkActive="active"
+    (click)="closeMenu()">
+
+    Inicio
+
+  </a>
+
+
+  <a
+    routerLink="/documents"
+    routerLinkActive="active"
+    (click)="closeMenu()">
+
+    Documentos
+
+  </a>
+
+
+  <a
+    routerLink="/requeriments"
+    routerLinkActive="active"
+    (click)="closeMenu()">
+
+    Requerimientos
+
+  </a>
+
+
   @if (['SUPER_ADMIN'].includes(role!)) {
-  <a routerLink="/fixed-assets" routerLinkActive="active" (click)="closeMenu()">Activos Fijos</a>
+
+    <a
+      routerLink="/fixed-assets"
+      routerLinkActive="active"
+      (click)="closeMenu()">
+
+      Activos Fijos
+
+    </a>
+
   }
-  
-  <a routerLink="/profile" routerLinkActive="active" (click)="closeMenu()">Perfil</a>
-  <a routerLink="/meeting-room" routerLinkActive="active" (click)="closeMenu()">Sala de Juntas</a>
-  <a routerLink="/absence-management/new" routerLinkActive="active" (click)="closeMenu()">Ausencias · Nueva solicitud</a>
-  <a routerLink="/absence-management/my-requests" routerLinkActive="active" (click)="closeMenu()">Ausencias · Mis solicitudes</a>
-  <a routerLink="/absence-management/approvals" routerLinkActive="active" (click)="closeMenu()">Ausencias · Aprobaciones</a>
-  <a routerLink="/absence-management/reports" routerLinkActive="active" (click)="closeMenu()">Ausencias · Indicadores</a>
-  <a routerLink="/academy" routerLinkActive="active" (click)="closeMenu()">Academia</a>
+
+
+  <a
+    routerLink="/profile"
+    routerLinkActive="active"
+    (click)="closeMenu()">
+
+    Perfil
+
+  </a>
+
+
+  <a
+    routerLink="/meeting-room"
+    routerLinkActive="active"
+    (click)="closeMenu()">
+
+    Sala de Juntas
+
+  </a>
+
+
+  <!-- ======================================= -->
+  <!-- AUSENTISMO                              -->
+  <!-- ======================================= -->
+
+  <a
+    href="#"
+    class="absence-menu-parent"
+    (click)="toggleAbsenceMenu($event)">
+
+    <span>
+      Ausentismo
+    </span>
+
+    <mat-icon>
+      {{
+        isAbsenceMenuOpen
+          ? 'expand_less'
+          : 'expand_more'
+      }}
+    </mat-icon>
+
+  </a>
+
+
+  @if (isAbsenceMenuOpen) {
+
+    <div class="absence-submenu">
+
+
+      <a
+        routerLink="/absence-management/new"
+        routerLinkActive="active"
+        (click)="closeMenu()">
+
+        Nueva solicitud
+
+      </a>
+
+
+      <a
+        routerLink="/absence-management/my-requests"
+        routerLinkActive="active"
+        (click)="closeMenu()">
+
+        Mis solicitudes
+
+      </a>
+
+
+      @if (absenceCapabilities.canApprove) {
+
+        <a
+          routerLink="/absence-management/approvals"
+          routerLinkActive="active"
+          (click)="closeMenu()">
+
+          Aprobaciones
+
+        </a>
+
+      }
+
+
+      @if (absenceCapabilities.canViewIndicators) {
+
+        <a
+          routerLink="/absence-management/reports"
+          routerLinkActive="active"
+          (click)="closeMenu()">
+
+          Indicadores
+
+        </a>
+
+      }
+
+      @if (absenceCapabilities.canManageAbsenceTypes) {
+
+        <a
+          routerLink="/absence-management/types"
+          routerLinkActive="active"
+          (click)="closeMenu()">
+
+          Tipos de ausencia
+
+        </a>
+
+      }
+
+
+    </div>
+
+  }
+
+
+  <a
+    routerLink="/academy"
+    routerLinkActive="active"
+    (click)="closeMenu()">
+
+    Academia
+
+  </a>
+
+
   @if (['SUPER_ADMIN'].includes(role!)) {
+
     <a
       routerLink="/admin"
       routerLinkActive="active"
       (click)="closeMenu()">
+
       Administrador
+
     </a>
-    }
+
+  }
+
 </nav>

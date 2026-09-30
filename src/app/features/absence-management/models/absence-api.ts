@@ -19,4 +19,19 @@ export interface AbsenceResponse extends AbsenceCreateRequest {
   updatedAt: string;
   approvedAt: string | null;
   approvalComment: string | null;
+
+  bossDecision?: string | null;
+  bossDecisionAt?: string | null;
+  bossComment?: string | null;
+
+  hrDecision?: string | null;
+  hrDecisionAt?: string | null;
+  hrComment?: string | null;
+}
+
+export interface AbsenceTypeResponse {
+  id: number;
+  name: string;
+  description: string | null;
+  active: boolean;
 }

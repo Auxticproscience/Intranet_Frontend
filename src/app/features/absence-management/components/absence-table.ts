@@ -56,10 +56,45 @@ import {
             <td class="reason">
               <small>{{ row.type }}</small
               >{{ row.reason }}
-              @if (row.decisionComment) {
+              @if (row.bossDecision) {
+                <small>
+                  Jefe: {{ decisionLabel(row.bossDecision) }}
+                  @if (row.bossDecisionDate) {
+                    · {{ row.bossDecisionDate }}
+                  }
+                </small>
+              }
+
+              @if (row.bossComment) {
+                <small>Comentario jefe: {{ row.bossComment }}</small>
+              }
+
+              @if (row.hrDecision) {
+                <small>
+                  Talento Humano: {{ decisionLabel(row.hrDecision) }}
+                  @if (row.hrDecisionDate) {
+                    · {{ row.hrDecisionDate }}
+                  }
+                </small>
+              }
+
+              @if (row.hrComment) {
+                <small>Comentario TH: {{ row.hrComment }}</small>
+              }
+
+              @if (
+                row.decisionComment &&
+                !row.hrComment &&
+                !row.bossComment
+              ) {
                 <small>Comentario: {{ row.decisionComment }}</small>
               }
-              @if (row.decisionDate) {
+
+              @if (
+                row.decisionDate &&
+                !row.hrDecisionDate &&
+                !row.bossDecisionDate
+              ) {
                 <small>Decisión: {{ row.decisionDate }}</small>
               }
             </td>
@@ -68,7 +103,7 @@ import {
               <span class="badge" [attr.data-status]="row.status">{{ labels[row.status] }}</span>
             </td>
             <td>
-              @if (approval && row.status === 'PENDING') {
+              @if (approval && (row.status === 'PENDING' || row.status === 'PENDING_HR')) {
                 <div class="actions">
                   @if (approval) {
                     <button
@@ -112,6 +147,12 @@ export class AbsenceTableComponent {
   @Output() approve = new EventEmitter<string>();
   @Output() reject = new EventEmitter<string>();
   readonly labels = STATUS_LABELS;
+  decisionLabel(value: string | null | undefined): string {
+    if (value === 'APPROVED') return 'Aprobada';
+    if (value === 'REJECTED') return 'Rechazada';
+    return value ?? '';
+  }
+
   duration(row: AbsenceRequest) {
     return row.allDay
       ? `${fullDays(row)} día(s) completo(s)`

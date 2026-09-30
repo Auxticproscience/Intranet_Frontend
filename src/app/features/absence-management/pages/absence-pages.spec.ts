@@ -57,12 +57,23 @@ describe('Absence management HTTP pages', () => {
       http
         .expectOne('/api/users/me')
         .flush({ id: 'u1', firstName: 'Test', lastName: 'Employee', sede: 'North' });
+
+      http
+        .expectOne('/api/absence-types')
+        .flush([
+          {
+            id: 1,
+            name: 'PERSONAL',
+            description: 'Permiso personal de prueba',
+            active: true,
+          },
+        ]);
+
       fixture.detectChanges();
     });
     function fill() {
       fixture.componentInstance.form.setValue({
         type: 'PERSONAL',
-        allDay: false,
         departureDate: '2026-10-01',
         returnDate: '2026-10-01',
         departureTime: '09:15',
@@ -111,20 +122,23 @@ describe('Absence management HTTP pages', () => {
       expect(text(fixture)).toContain('Test Approver');
       expect(fixture.componentInstance.form.controls.reason.value).toBe('');
     });
-    it('sends null times for an inclusive full-day request', () => {
+    it('requires departure and return times before submitting', () => {
       fill();
+
       fixture.componentInstance.form.patchValue({
-        allDay: true,
         departureTime: '',
         returnTime: '',
       });
+
       fixture.detectChanges();
+
       click(fixture, 'button[type="submit"]');
-      const req = http.expectOne('/api/absences');
-      expect(req.request.body.startTime).toBeNull();
-      expect(req.request.body.endTime).toBeNull();
-      req.flush({ ...row, startTime: null, endTime: null });
+
+      http.expectNone('/api/absences');
+
+      expect(fixture.componentInstance.form.invalid).toBeTrue();
     });
+
     it('prevents duplicate posts while saving', () => {
       fill();
       fixture.componentInstance.submit();
@@ -252,7 +266,7 @@ describe('Absence management HTTP pages', () => {
     });
     it('calculates personal KPIs from the my endpoint and separates full days', () => {
       http
-        .expectOne('/api/absences/my')
+        .expectOne('/api/absences/reporting')
         .flush([row, { ...row, id: 'r2', startTime: null, endTime: null, status: 'APPROVED' }]);
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('[data-testid="total"]').textContent.trim()).toBe(
@@ -264,7 +278,7 @@ describe('Absence management HTTP pages', () => {
     });
     it('applies filters to both KPIs and breakdowns', () => {
       http
-        .expectOne('/api/absences/my')
+        .expectOne('/api/absences/reporting')
         .flush([row, { ...row, id: 'r2', status: 'APPROVED', type: 'OTHER' }]);
       fixture.detectChanges();
       const filters = fixture.debugElement.query(By.directive(AbsenceFiltersComponent))
@@ -278,13 +292,13 @@ describe('Absence management HTTP pages', () => {
       expect(text(fixture)).not.toContain('OTHER');
     });
     it('shows no NaN values for an empty dataset', () => {
-      http.expectOne('/api/absences/my').flush([]);
+      http.expectOne('/api/absences/reporting').flush([]);
       fixture.detectChanges();
       expect(text(fixture)).toContain('0 h 0 min');
       expect(text(fixture)).not.toContain('NaN');
     });
     it('does not show misleading zero KPIs when the API fails', () => {
-      http.expectOne('/api/absences/my').flush({}, { status: 500, statusText: 'Error' });
+      http.expectOne('/api/absences/reporting').flush({}, { status: 500, statusText: 'Error' });
       fixture.detectChanges();
       expect(fixture.nativeElement.querySelector('[role="alert"]')).not.toBeNull();
       expect(fixture.nativeElement.querySelector('[data-testid="total"]')).toBeNull();

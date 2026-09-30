@@ -166,7 +166,7 @@ describe('AbsenceService HTTP integration', () => {
       toAbsenceRequest({ ...response, id: 'r2', status: 'APPROVED' }),
     ]);
     expect(summary.total).toBe(2);
-    expect(summary.statuses.map((s) => s.count)).toEqual([1, 1, 0, 0]);
+    expect(summary.statuses.map((s) => s.count)).toEqual([1, 0, 1, 0, 0]);
     expect(summary.types).toEqual([{ label: 'PERSONAL', count: 2 }]);
     expect(summarize([]).averageMinutes).toBe(0);
   });

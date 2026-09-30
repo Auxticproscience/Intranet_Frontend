@@ -24,7 +24,7 @@ export class ReportsComponent {
     search: '',
     site: '',
   });
-  readonly view$ = combineLatest([this.service.myState$, this.filters]).pipe(
+  readonly view$ = combineLatest([this.service.reportingState$, this.filters]).pipe(
     map(([state, filters]) => ({
       ...state,
       summary: summarize(filterRequests(state.data, filters)),

@@ -12,7 +12,7 @@ import { AbsenceTableComponent } from '../components/absence-table';
     <header>
       <p class="eyebrow">Gestión de ausencias</p>
       <h1>Aprobaciones</h1>
-      <p>Solo se muestran las solicitudes pendientes asignadas al usuario autenticado.</p>
+      <p>Aquí se muestran únicamente las solicitudes que están pendientes de tu aprobación.</p>
     </header>
     @if (message) {
       <p class="notice success" role="status">{{ message }}</p>

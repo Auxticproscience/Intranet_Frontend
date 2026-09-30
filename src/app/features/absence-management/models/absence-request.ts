@@ -1,8 +1,9 @@
 import { AbsenceResponse } from './absence-api';
-export const ABSENCE_STATUSES = ['PENDING', 'APPROVED', 'REJECTED', 'CANCELLED'] as const;
+export const ABSENCE_STATUSES = ['PENDING', 'PENDING_HR', 'APPROVED', 'REJECTED', 'CANCELLED'] as const;
 export type AbsenceStatus = (typeof ABSENCE_STATUSES)[number];
 export const STATUS_LABELS: Record<AbsenceStatus, string> = {
-  PENDING: 'Pendiente',
+  PENDING: 'Pendiente de jefe',
+  PENDING_HR: 'Pendiente de Talento Humano',
   APPROVED: 'Aprobada',
   REJECTED: 'Rechazada',
   CANCELLED: 'Cancelada',
@@ -25,6 +26,14 @@ export interface AbsenceRequest {
   status: AbsenceStatus;
   decisionComment?: string;
   decisionDate?: string;
+
+  bossDecision?: string | null;
+  bossDecisionDate?: string;
+  bossComment?: string | null;
+
+  hrDecision?: string | null;
+  hrDecisionDate?: string;
+  hrComment?: string | null;
 }
 export interface AbsenceFilters {
   status: string;
@@ -117,8 +126,19 @@ export function toAbsenceRequest(dto: AbsenceResponse): AbsenceRequest {
     approverId: dto.approverId,
     approverName: dto.approverName,
     status: dto.status,
+
     decisionComment: dto.approvalComment ?? undefined,
     decisionDate:
-      dto.status === 'PENDING' ? undefined : (dto.approvedAt ?? dto.updatedAt).slice(0, 10),
+      dto.status === 'PENDING' || dto.status === 'PENDING_HR'
+        ? undefined
+        : (dto.approvedAt ?? dto.updatedAt).slice(0, 10),
+
+    bossDecision: dto.bossDecision ?? null,
+    bossDecisionDate: dto.bossDecisionAt?.slice(0, 10),
+    bossComment: dto.bossComment ?? null,
+
+    hrDecision: dto.hrDecision ?? null,
+    hrDecisionDate: dto.hrDecisionAt?.slice(0, 10),
+    hrComment: dto.hrComment ?? null,
   };
 }
