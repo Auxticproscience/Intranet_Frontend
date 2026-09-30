@@ -50,6 +50,63 @@ describe('AbsenceApiService', () => {
     expect(req.request.body).toEqual(input);
     req.flush({});
   });
+  it('posts multipart data when a support file is supplied', () => {
+    const input = {
+      type: 'PERSONAL',
+      startDate: '2026-10-01',
+      endDate: '2026-10-01',
+      startTime: '09:15',
+      endTime: '10:30',
+      reason: 'Appointment',
+    };
+
+    const file = new File(
+      ['image-content'],
+      'soporte.png',
+      { type: 'image/png' }
+    );
+
+    api.createRequest(input, file).subscribe();
+
+    const req =
+      http.expectOne(API_ENDPOINTS.absences);
+
+    expect(req.request.method).toBe('POST');
+    expect(req.request.body instanceof FormData).toBeTrue();
+
+    const body =
+      req.request.body as FormData;
+
+    expect(body.get('file')).toBe(file);
+
+    const data =
+      body.get('data');
+
+    expect(data instanceof Blob).toBeTrue();
+    expect((data as Blob).type).toBe('application/json');
+
+    req.flush({});
+  });
+
+  it('downloads absence support as a blob and encodes the id', () => {
+    api.getSupport('id/part').subscribe();
+
+    const req =
+      http.expectOne(
+        `${API_ENDPOINTS.absences}/id%2Fpart/support`
+      );
+
+    expect(req.request.method).toBe('GET');
+    expect(req.request.responseType).toBe('blob');
+
+    req.flush(
+      new Blob(
+        ['image-content'],
+        { type: 'image/png' }
+      )
+    );
+  });
+
   it('approves with PUT and an empty comment by default', () => {
     api.approveRequest('request-1').subscribe();
     const req = http.expectOne(`${API_ENDPOINTS.absences}/request-1/approve`);

@@ -127,11 +127,49 @@ export class AbsenceApiService {
   }
 
   createRequest(
-    request: AbsenceCreateRequest
+    request: AbsenceCreateRequest,
+    file?: File | null
   ) {
+
+    if (!file) {
+      return this.http.post<AbsenceResponse>(
+        this.url,
+        request
+      );
+    }
+
+    const formData =
+      new FormData();
+
+    formData.append(
+      'data',
+      new Blob(
+        [JSON.stringify(request)],
+        {
+          type: 'application/json',
+        }
+      )
+    );
+
+    formData.append(
+      'file',
+      file
+    );
+
     return this.http.post<AbsenceResponse>(
       this.url,
-      request
+      formData
+    );
+  }
+
+  getSupport(
+    id: string
+  ) {
+    return this.http.get(
+      `${this.url}/${encodeURIComponent(id)}/support`,
+      {
+        responseType: 'blob',
+      }
     );
   }
 

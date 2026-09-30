@@ -122,6 +122,136 @@ describe('Absence management HTTP pages', () => {
       expect(text(fixture)).toContain('Test Approver');
       expect(fixture.componentInstance.form.controls.reason.value).toBe('');
     });
+    it('accepts a valid PNG support file', () => {
+      const file = new File(
+        ['image-content'],
+        'soporte.png',
+        { type: 'image/png' }
+      );
+
+      const input = {
+        files: [file],
+        value: 'soporte.png',
+      } as unknown as HTMLInputElement;
+
+      fixture.componentInstance.onFileSelected({
+        target: input,
+      } as unknown as Event);
+
+      expect(
+        fixture.componentInstance.selectedFile
+      ).toBe(file);
+
+      expect(
+        fixture.componentInstance.fileError
+      ).toBe('');
+    });
+
+    it('rejects unsupported support file formats', () => {
+      const file = new File(
+        ['document-content'],
+        'soporte.pdf',
+        { type: 'application/pdf' }
+      );
+
+      const input = {
+        files: [file],
+        value: 'soporte.pdf',
+      } as unknown as HTMLInputElement;
+
+      fixture.componentInstance.onFileSelected({
+        target: input,
+      } as unknown as Event);
+
+      expect(
+        fixture.componentInstance.selectedFile
+      ).toBeNull();
+
+      expect(
+        fixture.componentInstance.fileError
+      ).toContain('JPG');
+
+      expect(input.value).toBe('');
+    });
+
+    it('rejects support files larger than 5 MB', () => {
+      const file = new File(
+        [
+          new Uint8Array(
+            (5 * 1024 * 1024) + 1
+          ),
+        ],
+        'grande.png',
+        { type: 'image/png' }
+      );
+
+      const input = {
+        files: [file],
+        value: 'grande.png',
+      } as unknown as HTMLInputElement;
+
+      fixture.componentInstance.onFileSelected({
+        target: input,
+      } as unknown as Event);
+
+      expect(
+        fixture.componentInstance.selectedFile
+      ).toBeNull();
+
+      expect(
+        fixture.componentInstance.fileError
+      ).toContain('5 MB');
+
+      expect(input.value).toBe('');
+    });
+
+    it('sends multipart data when submitting with a support file', () => {
+      fill();
+
+      const file = new File(
+        ['image-content'],
+        'soporte.jpg',
+        { type: 'image/jpeg' }
+      );
+
+      const input = {
+        files: [file],
+        value: 'soporte.jpg',
+      } as unknown as HTMLInputElement;
+
+      fixture.componentInstance.onFileSelected({
+        target: input,
+      } as unknown as Event);
+
+      fixture.componentInstance.submit();
+
+      const req =
+        http.expectOne('/api/absences');
+
+      expect(
+        req.request.body instanceof FormData
+      ).toBeTrue();
+
+      const body =
+        req.request.body as FormData;
+
+      expect(body.get('file')).toBe(file);
+
+      req.flush({
+        ...row,
+        supportFile: 'private-generated-name.jpg',
+      });
+
+      fixture.detectChanges();
+
+      expect(
+        fixture.componentInstance.selectedFile
+      ).toBeNull();
+
+      expect(text(fixture))
+        .toContain('Solicitud creada');
+    });
+
     it('requires departure and return times before submitting', () => {
       fill();
 
@@ -175,6 +305,42 @@ describe('Absence management HTTP pages', () => {
       expect(text(fixture)).toContain('Pendiente');
       expect(fixture.nativeElement.querySelector('[aria-label^="Cancelar"]')).toBeNull();
     });
+    it('offers authenticated support download without exposing the stored filename', () => {
+      const withSupport = {
+        ...row,
+        supportFile: 'private-generated-name.png',
+      };
+
+      http
+        .expectOne('/api/absences/my')
+        .flush([withSupport]);
+
+      fixture.detectChanges();
+
+      expect(text(fixture))
+        .not.toContain(
+          'private-generated-name.png'
+        );
+
+      const button =
+        fixture.nativeElement.querySelector(
+          '[aria-label="Descargar soporte r1"]'
+        ) as HTMLButtonElement;
+
+      expect(button).not.toBeNull();
+
+      button.click();
+      fixture.detectChanges();
+
+      const req =
+        http.expectOne(
+          '/api/absences/r1/support'
+        );
+
+      expect(req.request.method).toBe('GET');
+      expect(req.request.responseType).toBe('blob');
+    });
+
     it('shows loading then an empty state', () => {
       expect(text(fixture)).toContain('Cargando');
       http.expectOne('/api/absences/my').flush([]);

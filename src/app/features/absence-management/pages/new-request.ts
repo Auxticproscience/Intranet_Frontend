@@ -3,6 +3,8 @@ import { AsyncPipe } from '@angular/common';
 import {
   ChangeDetectorRef,
   Component,
+  ElementRef,
+  ViewChild,
   inject,
 } from '@angular/core';
 
@@ -47,6 +49,23 @@ export function absenceRangeValidator(
     : { invalidRange: true };
 }
 
+const MAX_SUPPORT_SIZE =
+  5 * 1024 * 1024;
+
+const SUPPORT_TYPES =
+  new Set([
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+  ]);
+
+const SUPPORT_EXTENSIONS =
+  new Set([
+    'jpg',
+    'jpeg',
+    'png',
+  ]);
+
 @Component({
   selector: 'app-absence-new-request',
   standalone: true,
@@ -58,6 +77,12 @@ export function absenceRangeValidator(
   styleUrl: '../absence.scss',
 })
 export class NewRequestComponent {
+
+  @ViewChild('supportInput')
+  supportInput?: ElementRef<HTMLInputElement>;
+
+  selectedFile: File | null = null;
+  fileError = '';
 
   readonly service =
     inject(AbsenceService);
@@ -137,6 +162,59 @@ export class NewRequestComponent {
   error = '';
   saving = false;
 
+  onFileSelected(
+    event: Event
+  ): void {
+
+    this.fileError = '';
+
+    const input =
+      event.target as HTMLInputElement;
+
+    const file =
+      input.files?.[0] ?? null;
+
+    if (!file) {
+      this.selectedFile = null;
+      return;
+    }
+
+    const extension =
+      file.name
+        .split('.')
+        .pop()
+        ?.toLowerCase() ?? '';
+
+    if (
+      !SUPPORT_EXTENSIONS.has(extension) ||
+      !SUPPORT_TYPES.has(file.type.toLowerCase())
+    ) {
+
+      this.selectedFile = null;
+
+      this.fileError =
+        'El soporte debe ser una imagen JPG, JPEG o PNG.';
+
+      input.value = '';
+
+      return;
+    }
+
+    if (file.size > MAX_SUPPORT_SIZE) {
+
+      this.selectedFile = null;
+
+      this.fileError =
+        'El soporte no puede superar los 5 MB.';
+
+      input.value = '';
+
+      return;
+    }
+
+    this.selectedFile = file;
+  }
+
   submit(): void {
 
     this.success = '';
@@ -146,7 +224,8 @@ export class NewRequestComponent {
 
     if (
       this.form.invalid ||
-      this.saving
+      this.saving ||
+      !!this.fileError
     ) {
       return;
     }
@@ -169,11 +248,19 @@ export class NewRequestComponent {
           v.returnTime,
         reason:
           v.reason.trim(),
-      })
+      },
+      this.selectedFile)
       .subscribe({
         next: (request) => {
 
           this.form.reset();
+
+          this.selectedFile = null;
+          this.fileError = '';
+
+          if (this.supportInput) {
+            this.supportInput.nativeElement.value = '';
+          }
 
           this.success =
             `Solicitud creada. Aprobador: ${request.approverName}. Puede consultarla en Mis solicitudes.`;

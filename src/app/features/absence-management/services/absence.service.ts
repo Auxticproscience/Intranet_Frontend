@@ -203,11 +203,21 @@ export class AbsenceService {
   }
 
   createRequest(
-    request: AbsenceCreateRequest
+    request: AbsenceCreateRequest,
+    file?: File | null
   ) {
     return this.mutate(
-      this.api.createRequest(request)
+      this.api.createRequest(
+        request,
+        file
+      )
     );
+  }
+
+  getSupport(
+    id: string
+  ) {
+    return this.api.getSupport(id);
   }
 
   approveRequest(

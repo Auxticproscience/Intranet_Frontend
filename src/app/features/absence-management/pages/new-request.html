@@ -242,6 +242,46 @@
     </label>
 
 
+    <label>
+      Soporte adjunto
+
+      <input
+        #supportInput
+        type="file"
+        accept=".jpg,.jpeg,.png,image/jpeg,image/png"
+        (change)="onFileSelected($event)"
+      />
+
+      <small>
+        Opcional. Formatos permitidos: JPG, JPEG o PNG.
+        Tamaño máximo: 5 MB.
+      </small>
+    </label>
+
+
+    @if (selectedFile) {
+
+      <p class="notice success">
+        Archivo seleccionado:
+        {{ selectedFile.name }}
+      </p>
+
+    }
+
+
+    @if (fileError) {
+
+      <p
+        class="notice error"
+        role="alert">
+
+        {{ fileError }}
+
+      </p>
+
+    }
+
+
     @if (
       form.touched &&
       form.invalid

@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  inject,
+} from '@angular/core';
 import {
   AbsenceRequest,
   STATUS_LABELS,
@@ -6,6 +12,7 @@ import {
   formatDuration,
   fullDays,
 } from '../models/absence-request';
+import { AbsenceService } from '../services/absence.service';
 @Component({
   selector: 'app-absence-table',
   standalone: true,
@@ -103,30 +110,65 @@ import {
               <span class="badge" [attr.data-status]="row.status">{{ labels[row.status] }}</span>
             </td>
             <td>
-              @if (approval && (row.status === 'PENDING' || row.status === 'PENDING_HR')) {
-                <div class="actions">
-                  @if (approval) {
-                    <button
-                      type="button"
-                      [disabled]="busy"
-                      [attr.aria-label]="'Aprobar ' + row.id"
-                      (click)="approve.emit(row.id)"
-                    >
-                      Aprobar</button
-                    ><button
-                      type="button"
-                      [disabled]="busy"
-                      class="secondary"
-                      [attr.aria-label]="'Rechazar ' + row.id"
-                      (click)="reject.emit(row.id)"
-                    >
-                      Rechazar
-                    </button>
-                  }
-                </div>
-              } @else {
-                <span>—</span>
-              }
+              <div class="actions">
+
+                @if (row.supportFile) {
+
+                  <button
+                    type="button"
+                    class="secondary"
+                    [disabled]="busy || downloadingId === row.id"
+                    [attr.aria-label]="'Descargar soporte ' + row.id"
+                    (click)="downloadSupport(row)"
+                  >
+                    {{
+                      downloadingId === row.id
+                        ? 'Descargando…'
+                        : 'Ver soporte'
+                    }}
+                  </button>
+
+                }
+
+                @if (
+                  approval &&
+                  (row.status === 'PENDING' ||
+                   row.status === 'PENDING_HR')
+                ) {
+
+                  <button
+                    type="button"
+                    [disabled]="busy"
+                    [attr.aria-label]="'Aprobar ' + row.id"
+                    (click)="approve.emit(row.id)"
+                  >
+                    Aprobar
+                  </button>
+
+                  <button
+                    type="button"
+                    [disabled]="busy"
+                    class="secondary"
+                    [attr.aria-label]="'Rechazar ' + row.id"
+                    (click)="reject.emit(row.id)"
+                  >
+                    Rechazar
+                  </button>
+
+                }
+
+                @if (
+                  !row.supportFile &&
+                  !(
+                    approval &&
+                    (row.status === 'PENDING' ||
+                     row.status === 'PENDING_HR')
+                  )
+                ) {
+                  <span>—</span>
+                }
+
+              </div>
             </td>
           </tr>
         } @empty {
@@ -138,7 +180,16 @@ import {
         }
       </tbody>
     </table>
-  </div>`,
+  </div>
+
+  @if (downloadError) {
+    <p
+      class="notice error"
+      role="alert">
+      {{ downloadError }}
+    </p>
+  }
+  `,
 })
 export class AbsenceTableComponent {
   @Input() rows: AbsenceRequest[] = [];
@@ -146,7 +197,62 @@ export class AbsenceTableComponent {
   @Input() busy = false;
   @Output() approve = new EventEmitter<string>();
   @Output() reject = new EventEmitter<string>();
+  private readonly service =
+    inject(AbsenceService);
+
+  downloadingId: string | null = null;
+  downloadError = '';
+
+  downloadSupport(
+    row: AbsenceRequest
+  ): void {
+
+    this.downloadError = '';
+    this.downloadingId = row.id;
+
+    this.service
+      .getSupport(row.id)
+      .subscribe({
+        next: (blob) => {
+
+          const extension =
+            blob.type === 'image/png'
+              ? 'png'
+              : 'jpg';
+
+          const objectUrl =
+            URL.createObjectURL(blob);
+
+          const link =
+            document.createElement('a');
+
+          link.href = objectUrl;
+          link.download =
+            `soporte-ausencia-${row.id}.${extension}`;
+
+          document.body.appendChild(link);
+          link.click();
+          link.remove();
+
+          URL.revokeObjectURL(
+            objectUrl
+          );
+
+          this.downloadingId = null;
+        },
+
+        error: () => {
+
+          this.downloadError =
+            'No fue posible descargar el soporte de esta solicitud.';
+
+          this.downloadingId = null;
+        },
+      });
+  }
+
   readonly labels = STATUS_LABELS;
+
   decisionLabel(value: string | null | undefined): string {
     if (value === 'APPROVED') return 'Aprobada';
     if (value === 'REJECTED') return 'Rechazada';
