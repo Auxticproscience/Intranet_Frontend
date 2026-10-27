@@ -1,6 +1,6 @@
 # Intranet Frontend
 
-Angular frontend for an internal enterprise platform, originally developed for Lico Distribuciones. It includes authentication, profiles, academy courses and certificates, documents, requirements, reports, user and area administration, fixed assets, and meeting-room reservations. Existing branding and business behavior remain in place during foundation cleanup.
+Angular frontend for an internal enterprise platform, originally developed for ProScience. It includes authentication, profiles, academy courses and certificates, documents, requirements, reports, user and area administration, fixed assets, and meeting-room reservations. Existing branding and business behavior remain in place during foundation cleanup.
 
 ## Requirements
 
@@ -70,7 +70,6 @@ Other deferred items:
 - Baseline npm audit reported 51 advisories (1 low, 13 moderate, 34 high, 3 critical). Dependency/security remediation needs a separately reviewed phase; no automatic audit fix was applied.
 - Angular ESLint 20.7.0 supports ESLint 8/9; ESLint 9 is retained for compatibility despite its npm support warning. Revisit tooling support alongside the future framework/toolchain review.
 - The compiler reports existing NG8107 optional-chain typing debt in the area requirements template. Its runtime guard is retained.
-- Two existing videos are approximately 31 MB and 95 MB. They are retained without history rewriting.
 - The empty admin report TypeScript file is retained as potentially unfinished business functionality. The empty app stylesheet is still referenced.
 - Test coverage is limited to two app-shell tests. The obsolete generated welcome-heading assertion has been replaced with checks of the actual route outlet and loading indicator.
 - Business strings, branding, API typing, comments outside this cleanup, and broader formatting debt remain for later phases.

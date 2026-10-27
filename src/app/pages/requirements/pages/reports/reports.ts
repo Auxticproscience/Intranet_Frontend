@@ -378,7 +378,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
       .p-ALTA{color:#e65100;font-weight:600;} .p-CRITICA{color:#c62828;font-weight:600;}
     </style></head><body>
     <h1>Reporte de Requerimientos</h1>
-    <div class="meta">Lico Distribuciones S.A.S. · Generado el
+    <div class="meta">ProScience Lab S.A.S. · Generado el
       ${new Date().toLocaleDateString('es-CO', { day: '2-digit', month: 'long', year: 'numeric' })}
     </div>
     <div class="kpis">

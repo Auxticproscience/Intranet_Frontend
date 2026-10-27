@@ -1,42 +1,58 @@
 /* ══════════════════════════════════════════
-   LICO DISTRIBUCIONES — DESIGN SYSTEM
-   Paleta corporativa oficial
+   PROSCIENCE — HOJA DE ESTILOS GLOBAL
+   Turquesa #01ADBB · Negro · Blanco · Grises
 ══════════════════════════════════════════ */
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500;600&display=swap');
 
 :root {
   /* Colores principales */
-  --color-primary:       #0A142D;   /* Azul marino */
-  --color-accent:        #CC521B;   /* Naranja/teja */
-  --color-bg:            #EDE4D9;   /* Crema fondo */
+  --color-primary:       #171717;   /* Negro: títulos y fondos oscuros */
+  --color-accent:        #01ADBB;   /* Turquesa: acentos decorativos */
+  --color-bg:            #F4F6F7;   /* Gris claro: fondo general */
 
-  /* Colores secundarios */
-  --color-brown:         #90574D;   /* Marrón */
-  --color-beige:         #CCBBA7;   /* Beige */
-  --color-blue-light:    #94B6EF;   /* Azul claro */
+  /* Variantes de apoyo */
+  --color-secondary:     var(--color-accent);
+  --color-accent-dark:   #007A84;   /* Turquesa oscuro: texto sobre fondos claros */
+  --color-accent-light:  #E6F7F8;   /* Turquesa suave: estados hover */
+  --color-blue-light:    #B8EDF1;
 
-  /* Utilidades */
-  --color-card:          #FDFAF6;
-  --color-text:          #0A142D;
-  --color-text-soft:     #5a5a6e;
-  --color-border:        #D9CEBD;
-  --color-secundary:     #CC521B;   /* alias para compatibilidad */
+  /* Superficies y texto */
+  --color-card:          #FFFFFF;
+  --color-text:          #171717;
+  --color-text-soft:     #5B6573;
+  --color-border:        #D8E1E5;
+  --color-disabled-bg:   #F1F3F5;
+  --color-overlay:       rgba(23, 23, 23, 0.45);
 
-  /* Tipografías */
-  --font-title:   'Cormorant Garamond', Georgia, serif;   /* reemplaza Goldenbook */
-  --font-body:    'DM Sans', system-ui, sans-serif;       /* reemplaza General Sans */
-  --font-family:  var(--font-body);
+  /* Estados */
+  --color-success:       #2E7D32;
+  --color-error:         #C62828;
+
+  /* Alias conservados para los componentes existentes */
+  --color-brown:         var(--color-text-soft);
+  --color-beige:         #DCE3E6;
+  --color-secundary:     var(--color-secondary);
+
+  /* Tipografías originales conservadas */
+  --font-title:          'Cormorant Garamond', Georgia, serif;
+  --font-body:           'DM Sans', system-ui, sans-serif;
+  --font-family:         var(--font-body);
 
   /* Miscelánea */
-  --border-radius: 12px;
-  --shadow:        0 2px 8px rgba(10, 20, 45, 0.12);
-  --shadow-md:     0 4px 20px rgba(10, 20, 45, 0.15);
+  --border-radius:       12px;
+  --shadow:              0 2px 8px rgba(23, 23, 23, 0.10);
+  --shadow-md:           0 4px 20px rgba(23, 23, 23, 0.14);
 }
 
 /* ── Reset base ── */
-*, *::before, *::after { box-sizing: border-box; }
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
 
-html, body {
+html,
+body {
   height: 100%;
   margin: 0;
   padding: 0;
@@ -49,7 +65,12 @@ body {
 }
 
 /* ── Tipografía global ── */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-title);
   font-weight: 600;
   color: var(--color-primary);
@@ -63,7 +84,8 @@ h3 { font-size: 1.5rem; }
 h4 { font-size: 1.2rem; }
 
 /* Línea decorativa bajo h2 y h3 */
-h2::after, h3::after {
+h2::after,
+h3::after {
   content: '';
   display: block;
   width: 60px;
@@ -75,14 +97,27 @@ h2::after, h3::after {
 
 /* ── Animaciones globales ── */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(8px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes pulse {
-  0%   { transform: scale(1);   opacity: 0.6; }
-  50%  { transform: scale(1.1); opacity: 1;   }
-  100% { transform: scale(1);   opacity: 0.6; }
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
 }
 
 /* ── Splash screen ── */
@@ -96,19 +131,19 @@ h2::after, h3::after {
   background: var(--color-primary);
   z-index: 9999;
   transition: opacity 0.5s ease;
+}
 
-  .logo {
-    width: 140px;
-    margin-bottom: 24px;
-    animation: pulse 1.5s infinite;
-  }
+#splash-screen .logo {
+  width: 140px;
+  margin-bottom: 24px;
+  animation: pulse 1.5s infinite;
+}
 
-  p {
-    font-family: var(--font-title);
-    font-size: 18px;
-    color: var(--color-beige);
-    letter-spacing: 0.05em;
-  }
+#splash-screen p {
+  font-family: var(--font-title);
+  font-size: 18px;
+  color: var(--color-beige);
+  letter-spacing: 0.05em;
 }
 
 #splash-screen.hide {
@@ -116,90 +151,100 @@ h2::after, h3::after {
   pointer-events: none;
 }
 
-/* ── Angular Material overrides ── */
+/* ── Angular Material: estilos globales ── */
 .cdk-overlay-container .mat-mdc-select-panel {
-  background-color: #fff !important;
+  background-color: var(--color-card) !important;
   border-radius: 8px !important;
 }
 
-::ng-deep .cdk-overlay-container  { z-index: 2000 !important; }
-::ng-deep .cdk-overlay-backdrop   { z-index: 1999 !important; background: rgba(10,20,45,0.45) !important; }
+.cdk-overlay-container {
+  z-index: 2000 !important;
+}
 
-/* Snackbars */
+.cdk-overlay-backdrop {
+  z-index: 1999 !important;
+  background: var(--color-overlay) !important;
+}
+
+/* ── Snackbars ── */
 .mat-mdc-snack-bar-container.snackbar-success,
 .mat-mdc-snack-bar-container.snackbar-error {
-  background-color: #fff !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+  background-color: var(--color-card) !important;
+  box-shadow: 0 4px 12px rgba(23, 23, 23, 0.20) !important;
   border-radius: 10px !important;
   padding: 0 !important;
 }
 
 .mat-mdc-snack-bar-container .mdc-snackbar__surface {
-  background-color: #fff !important;
+  background-color: var(--color-card) !important;
   box-shadow: none !important;
 }
 
 .snackbar-success .mdc-snackbar__label {
-  color: #2e7d32 !important;
+  color: var(--color-success) !important;
   font-weight: 600;
-  border-left: 5px solid #2e7d32;
+  border-left: 5px solid var(--color-success);
   padding: 12px 18px !important;
 }
 
 .snackbar-error .mdc-snackbar__label {
-  color: #c62828 !important;
+  color: var(--color-error) !important;
   font-weight: 600;
-  border-left: 5px solid #c62828;
+  border-left: 5px solid var(--color-error);
   padding: 12px 18px !important;
 }
 
-/* ── Responsive type ── */
+/* ── Tipografía responsive ── */
 @media (max-width: 768px) {
   h1 { font-size: 1.8rem; }
   h2 { font-size: 1.5rem; }
   h3 { font-size: 1.2rem; }
 }
 
-/* ── Mat-Menu fix: fondo opaco ── */
+/* ── Mat-Menu: fondo opaco ── */
 .mat-mdc-menu-panel {
-  background-color: #fff !important;
+  background-color: var(--color-card) !important;
   border-radius: 10px !important;
-  box-shadow: 0 8px 24px rgba(10, 20, 45, 0.18) !important;
+  box-shadow: 0 8px 24px rgba(23, 23, 23, 0.18) !important;
   border: 1px solid var(--color-border) !important;
   overflow: hidden !important;
   min-width: 220px !important;
 }
 
 .mat-mdc-menu-content {
-  background-color: #fff !important;
+  background-color: var(--color-card) !important;
   padding: 6px 0 !important;
 }
 
 .mat-mdc-menu-item {
-  background-color: #fff !important;
+  background-color: var(--color-card) !important;
   color: var(--color-primary) !important;
   font-family: var(--font-body) !important;
   font-size: 14px !important;
+}
 
-  &:hover {
-    background-color: #fdf4ef !important;
-    color: var(--color-accent) !important;
-  }
+.mat-mdc-menu-item:not([disabled]):hover {
+  background-color: var(--color-accent-light) !important;
+  color: var(--color-accent-dark) !important;
+}
 
-  .mat-icon {
-    color: var(--color-text-soft) !important;
-    font-size: 18px !important;
-    margin-right: 10px !important;
-  }
+.mat-mdc-menu-item .mat-icon {
+  color: var(--color-text-soft) !important;
+  font-size: 18px !important;
+  margin-right: 10px !important;
+}
 
-  &[disabled] {
-    background-color: #fafafa !important;
-    color: var(--color-text-soft) !important;
-    border-bottom: 1px solid var(--color-border) !important;
-    opacity: 1 !important;
-    font-size: 12px !important;
-    cursor: default !important;
-  }
+.mat-mdc-menu-item:not([disabled]):hover .mat-icon {
+  color: var(--color-accent-dark) !important;
+}
+
+.mat-mdc-menu-item[disabled] {
+  background-color: var(--color-disabled-bg) !important;
+  color: var(--color-text-soft) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  opacity: 1 !important;
+  font-size: 12px !important;
+  cursor: default !important;
 }
 
 /* Asegurar que el overlay tenga z-index correcto */

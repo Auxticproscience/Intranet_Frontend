@@ -7,7 +7,7 @@ const MOCK_COURSES: Course[] = [
   {
     id: 1, order: 1,
     title: 'Bienvenida e Inducción Corporativa',
-    description: 'Conoce la historia, misión, visión y valores de Lico Distribuciones. Comprende la estructura organizacional y los canales de comunicación internos.',
+    description: 'Conoce la historia, misión, visión y valores de ProScience. Comprende la estructura organizacional y los canales de comunicación internos.',
     videoUrl: 'assets/videos/VIdeoHome.mp4',
     examUrl: 'https://forms.gle/examen-induccion',
     isEnrolled: true, examPassed: true,

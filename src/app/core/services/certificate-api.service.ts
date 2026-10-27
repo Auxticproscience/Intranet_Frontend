@@ -7,14 +7,14 @@ const MOCK_CERTS: Certificate[] = [
     id: 1, courseId: 1,
     courseTitle: 'Bienvenida e Inducción Corporativa',
     issuedAt: '2025-02-10',
-    userName: 'Jorge Barbosa',
+    userName: 'Luis Velez',
     score: 92,
   },
   {
     id: 2, courseId: 2,
     courseTitle: 'Seguridad en el Trabajo y Salud Ocupacional',
     issuedAt: '2025-02-15',
-    userName: 'Jorge Barbosa',
+    userName: 'Luis Velez',
     score: 85,
   },
 ];
@@ -63,7 +63,7 @@ export class CertificateService {
 </head>
 <body>
   <div class="cert">
-    <div class="logo-text">Lico Distribuciones S.A.S.</div>
+    <div class="logo-text">ProScience Lab S.A.S.</div>
     <h1>Certificado</h1>
     <div class="subtitle">de Formación Interna</div>
     <div class="recipient-label">Otorgado a</div>
@@ -75,12 +75,12 @@ export class CertificateService {
       <div class="date">Expedido el ${new Date(cert.issuedAt).toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'})}</div>
       <div class="sig">
         <div class="sig-line"></div>
-        <div class="sig-name">Jorge Barbosa</div>
-        <div class="sig-role">Gerente de Sistemas</div>
+        <div class="sig-name">Luis Velez</div>
+        <div class="sig-role">Auxiliar de Sistemas</div>
       </div>
       <div class="sig">
         <div class="sig-line"></div>
-        <div class="sig-name">Dilson Otalvaro</div>
+        <div class="sig-name">Laura Rivera</div>
         <div class="sig-role">Talento Humano</div>
       </div>
     </div>

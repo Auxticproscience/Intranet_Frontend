@@ -720,8 +720,8 @@ export class FixedAssetsComponent implements OnInit {
         <div class="firma-block">
           <div style="text-align:left; font-size:11px; margin-bottom:4px;">Hace entrega,</div>
           <div class="firma-line"></div>
-          <div class="nombre">Jorge Iván Barbosa Vargas</div>
-          <div class="cargo">Director TIC</div>
+          <div class="nombre">Luis Velez</div>
+          <div class="cargo">Auxiliar de Sistemas</div>
         </div>
 
         <div class="firma-block">

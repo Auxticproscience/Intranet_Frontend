@@ -280,7 +280,7 @@ export class AssetsReportComponent implements OnChanges, AfterViewInit {
     .s-dado_de_baja{color:#c62828;font-weight:600;}
     @media print{body{background:#fff;padding:0;}}</style></head><body>
     <h1>Reporte de Activos Fijos</h1>
-    <div class="meta">Lico Distribuciones S.A.S. · ${new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'})}</div>
+    <div class="meta">ProScience Lab S.A.S. · ${new Date().toLocaleDateString('es-CO',{day:'2-digit',month:'long',year:'numeric'})}</div>
     <div class="kpis">
       <div class="kpi"><strong>${this.assets.length}</strong><span>Total activos</span></div>
       <div class="kpi"><strong>${this.countStatus('activo')}</strong><span>Activos</span></div>
